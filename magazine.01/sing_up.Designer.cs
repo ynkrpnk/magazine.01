@@ -48,59 +48,59 @@ namespace magazine._01
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(337, 113);
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 18.32727F);
+            this.label3.Location = new System.Drawing.Point(280, 69);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(131, 25);
+            this.label3.Size = new System.Drawing.Size(153, 38);
             this.label3.TabIndex = 19;
-            this.label3.Text = "Регестрація";
+            this.label3.Text = "Реєстрація";
             // 
             // passUser1
             // 
             this.passUser1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.passUser1.Location = new System.Drawing.Point(338, 218);
+            this.passUser1.Location = new System.Drawing.Point(300, 192);
             this.passUser1.Multiline = true;
             this.passUser1.Name = "passUser1";
-            this.passUser1.Size = new System.Drawing.Size(130, 34);
-            this.passUser1.TabIndex = 15;
+            this.passUser1.Size = new System.Drawing.Size(163, 34);
+            this.passUser1.TabIndex = 2;
             // 
             // loginUser1
             // 
             this.loginUser1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.loginUser1.Location = new System.Drawing.Point(338, 169);
+            this.loginUser1.Location = new System.Drawing.Point(300, 138);
             this.loginUser1.Multiline = true;
             this.loginUser1.Name = "loginUser1";
-            this.loginUser1.Size = new System.Drawing.Size(130, 34);
-            this.loginUser1.TabIndex = 14;
+            this.loginUser1.Size = new System.Drawing.Size(163, 34);
+            this.loginUser1.TabIndex = 1;
             // 
             // buttonCreate
             // 
-            this.buttonCreate.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonCreate.Location = new System.Drawing.Point(236, 268);
+            this.buttonCreate.Font = new System.Drawing.Font("Segoe UI", 15.70909F);
+            this.buttonCreate.Location = new System.Drawing.Point(199, 252);
             this.buttonCreate.Name = "buttonCreate";
-            this.buttonCreate.Size = new System.Drawing.Size(283, 40);
-            this.buttonCreate.TabIndex = 13;
-            this.buttonCreate.Text = "Створити аккаунт";
+            this.buttonCreate.Size = new System.Drawing.Size(301, 40);
+            this.buttonCreate.TabIndex = 3;
+            this.buttonCreate.Text = "Створити акаунт";
             this.buttonCreate.UseVisualStyleBackColor = true;
             this.buttonCreate.Click += new System.EventHandler(this.buttonCreate_Click);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.Location = new System.Drawing.Point(231, 218);
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 15.70909F);
+            this.label4.Location = new System.Drawing.Point(194, 192);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(86, 25);
+            this.label4.Size = new System.Drawing.Size(96, 32);
             this.label4.TabIndex = 12;
             this.label4.Text = "Пароль";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label5.Location = new System.Drawing.Point(231, 178);
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 15.70909F);
+            this.label5.Location = new System.Drawing.Point(194, 140);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(64, 25);
+            this.label5.Size = new System.Drawing.Size(73, 32);
             this.label5.TabIndex = 11;
             this.label5.Text = "Логін";
             // 
@@ -108,9 +108,9 @@ namespace magazine._01
             // 
             this.pictureBox4.BackgroundImage = global::magazine._01.Properties.Resources.png_transparent_computer_icons_register_button_miscellaneous_cdr_microphone;
             this.pictureBox4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox4.Location = new System.Drawing.Point(236, 85);
+            this.pictureBox4.Location = new System.Drawing.Point(200, 58);
             this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(104, 78);
+            this.pictureBox4.Size = new System.Drawing.Size(50, 54);
             this.pictureBox4.TabIndex = 20;
             this.pictureBox4.TabStop = false;
             // 
@@ -119,9 +119,9 @@ namespace magazine._01
             this.pictureBox3.BackColor = System.Drawing.SystemColors.Control;
             this.pictureBox3.BackgroundImage = global::magazine._01.Properties.Resources._1827954;
             this.pictureBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox3.Location = new System.Drawing.Point(474, 103);
+            this.pictureBox3.Location = new System.Drawing.Point(455, 69);
             this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(45, 47);
+            this.pictureBox3.Size = new System.Drawing.Size(45, 36);
             this.pictureBox3.TabIndex = 18;
             this.pictureBox3.TabStop = false;
             this.pictureBox3.Click += new System.EventHandler(this.pictureBox3_Click);
@@ -131,7 +131,7 @@ namespace magazine._01
             this.pictureBox2.BackColor = System.Drawing.SystemColors.Control;
             this.pictureBox2.BackgroundImage = global::magazine._01.Properties.Resources.png_transparent_gray_eye_on_black_background_logo_circle_brand_angle_eye_icon_viewed_accomms_people_black_oval_thumbnail;
             this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox2.Location = new System.Drawing.Point(488, 212);
+            this.pictureBox2.Location = new System.Drawing.Point(469, 192);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(31, 34);
             this.pictureBox2.TabIndex = 17;
@@ -143,7 +143,7 @@ namespace magazine._01
             this.pictureBox1.BackColor = System.Drawing.SystemColors.Control;
             this.pictureBox1.BackgroundImage = global::magazine._01.Properties.Resources.png_clipart_symbol_eye_computer_icons_copywriter_background_miscellaneous_logo_thumbnail;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox1.Location = new System.Drawing.Point(488, 215);
+            this.pictureBox1.Location = new System.Drawing.Point(469, 195);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(31, 31);
             this.pictureBox1.TabIndex = 16;
@@ -154,7 +154,7 @@ namespace magazine._01
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(695, 420);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.pictureBox3);
@@ -166,7 +166,7 @@ namespace magazine._01
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label5);
             this.Name = "sing_up";
-            this.Text = "sing_up";
+            this.Text = "Реєстрація";
             this.Load += new System.EventHandler(this.sing_up_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();

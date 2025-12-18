@@ -44,7 +44,7 @@ namespace magazine._01
 
                 if (table.Rows.Count == 1)
                 {
-                    MessageBox.Show("Ви увійшли!", "Успішно", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("   Ви увійшли!        ", "Успішно", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     // Запускаємо головну форму (richTextBoxSearchLog)
                     richTextBoxSearchLog frm1 = new richTextBoxSearchLog();
@@ -55,7 +55,7 @@ namespace magazine._01
                 }
                 else
                 {
-                    MessageBox.Show("Такого акаунта не існує!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("   Такого акаунта не існує!    ", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             catch (Exception ex)

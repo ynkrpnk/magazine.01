@@ -36,12 +36,11 @@ namespace magazine._01
             this.завантажитиДаніToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.зберегтиРезультатиПошукуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.вихідToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.алгоритмиПошукуToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.лінійнийПошукToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.бінарнийПошукToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.пошукУЧЧдеревіToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBoxForCategory = new System.Windows.Forms.TextBox();
@@ -56,26 +55,30 @@ namespace magazine._01
             this.label4 = new System.Windows.Forms.Label();
             this.labelTime = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.label6 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(18, 18);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.файлToolStripMenuItem,
-            this.алгоритмиПошукуToolStripMenuItem});
+            this.файлToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1050, 29);
+            this.menuStrip1.Size = new System.Drawing.Size(1193, 29);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
-            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // файлToolStripMenuItem
             // 
@@ -99,7 +102,6 @@ namespace magazine._01
             this.завантажитиДаніToolStripMenuItem.Name = "завантажитиДаніToolStripMenuItem";
             this.завантажитиДаніToolStripMenuItem.Size = new System.Drawing.Size(268, 24);
             this.завантажитиДаніToolStripMenuItem.Text = "Завантажити дані з файлу";
-            this.завантажитиДаніToolStripMenuItem.Click += new System.EventHandler(this.завантажитиДаніToolStripMenuItem_Click);
             // 
             // зберегтиРезультатиПошукуToolStripMenuItem
             // 
@@ -113,69 +115,77 @@ namespace magazine._01
             this.вихідToolStripMenuItem1.Size = new System.Drawing.Size(268, 24);
             this.вихідToolStripMenuItem1.Text = "Вихід";
             // 
-            // алгоритмиПошукуToolStripMenuItem
-            // 
-            this.алгоритмиПошукуToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.лінійнийПошукToolStripMenuItem,
-            this.бінарнийПошукToolStripMenuItem,
-            this.пошукУЧЧдеревіToolStripMenuItem});
-            this.алгоритмиПошукуToolStripMenuItem.Name = "алгоритмиПошукуToolStripMenuItem";
-            this.алгоритмиПошукуToolStripMenuItem.Size = new System.Drawing.Size(144, 23);
-            this.алгоритмиПошукуToolStripMenuItem.Text = "Алгоритми пошуку";
-            // 
-            // лінійнийПошукToolStripMenuItem
-            // 
-            this.лінійнийПошукToolStripMenuItem.Name = "лінійнийПошукToolStripMenuItem";
-            this.лінійнийПошукToolStripMenuItem.Size = new System.Drawing.Size(208, 24);
-            this.лінійнийПошукToolStripMenuItem.Text = "Лінійний пошук";
-            // 
-            // бінарнийПошукToolStripMenuItem
-            // 
-            this.бінарнийПошукToolStripMenuItem.Name = "бінарнийПошукToolStripMenuItem";
-            this.бінарнийПошукToolStripMenuItem.Size = new System.Drawing.Size(208, 24);
-            this.бінарнийПошукToolStripMenuItem.Text = "Бінарний пошук";
-            // 
-            // пошукУЧЧдеревіToolStripMenuItem
-            // 
-            this.пошукУЧЧдеревіToolStripMenuItem.Name = "пошукУЧЧдеревіToolStripMenuItem";
-            this.пошукУЧЧдеревіToolStripMenuItem.Size = new System.Drawing.Size(208, 24);
-            this.пошукУЧЧдеревіToolStripMenuItem.Text = "Пошук у ЧЧ-дереві";
-            // 
             // toolStrip1
             // 
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(18, 18);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton2});
+            this.toolStripButton2,
+            this.toolStripButton1,
+            this.toolStripButton3,
+            this.toolStripButton4});
             this.toolStrip1.Location = new System.Drawing.Point(0, 29);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1050, 26);
+            this.toolStrip1.Size = new System.Drawing.Size(1193, 32);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
-            this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
             // 
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton2.Font = new System.Drawing.Font("Segoe UI", 11.78182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(69, 23);
+            this.toolStripButton2.Size = new System.Drawing.Size(92, 29);
             this.toolStripButton2.Text = "Оновити";
             this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton1.Font = new System.Drawing.Font("Segoe UI", 11.78182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(156, 29);
+            this.toolStripButton1.Text = "Додати елемент";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton3
+            // 
+            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton3.Font = new System.Drawing.Font("Segoe UI", 11.78182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
+            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton3.Name = "toolStripButton3";
+            this.toolStripButton3.Size = new System.Drawing.Size(162, 29);
+            this.toolStripButton3.Text = "Змінити елемент";
+            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
+            // 
+            // toolStripButton4
+            // 
+            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton4.Font = new System.Drawing.Font("Segoe UI", 11.78182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
+            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton4.Name = "toolStripButton4";
+            this.toolStripButton4.Size = new System.Drawing.Size(186, 29);
+            this.toolStripButton4.Text = "Видалити елементи";
+            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
             // 
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 90);
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1});
+            this.dataGridView1.Location = new System.Drawing.Point(0, 112);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 47;
             this.dataGridView1.Size = new System.Drawing.Size(769, 297);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
-            this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
             this.dataGridView1.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
-            this.dataGridView1.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView1_UserAddedRow);
             // 
             // groupBox1
             // 
@@ -183,48 +193,46 @@ namespace magazine._01
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.textBoxForName);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(12, 424);
+            this.groupBox1.Location = new System.Drawing.Point(776, 70);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(373, 213);
+            this.groupBox1.Size = new System.Drawing.Size(410, 166);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Пошук";
             // 
             // textBoxForCategory
             // 
-            this.textBoxForCategory.Location = new System.Drawing.Point(214, 62);
+            this.textBoxForCategory.Location = new System.Drawing.Point(214, 44);
             this.textBoxForCategory.Multiline = true;
             this.textBoxForCategory.Name = "textBoxForCategory";
-            this.textBoxForCategory.Size = new System.Drawing.Size(132, 31);
+            this.textBoxForCategory.Size = new System.Drawing.Size(171, 31);
             this.textBoxForCategory.TabIndex = 5;
-            this.textBoxForCategory.TextChanged += new System.EventHandler(this.textBoxForPrice_TextChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Segoe UI", 15F);
-            this.label5.Location = new System.Drawing.Point(6, 58);
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 14F);
+            this.label5.Location = new System.Drawing.Point(6, 41);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(202, 31);
+            this.label5.Size = new System.Drawing.Size(199, 30);
             this.label5.TabIndex = 3;
-            this.label5.Text = "Введіть категорію";
+            this.label5.Text = "Оберіть категорію";
             // 
             // textBoxForName
             // 
-            this.textBoxForName.Location = new System.Drawing.Point(214, 138);
+            this.textBoxForName.Location = new System.Drawing.Point(214, 105);
             this.textBoxForName.Multiline = true;
             this.textBoxForName.Name = "textBoxForName";
-            this.textBoxForName.Size = new System.Drawing.Size(132, 31);
+            this.textBoxForName.Size = new System.Drawing.Size(171, 31);
             this.textBoxForName.TabIndex = 1;
-            this.textBoxForName.TextChanged += new System.EventHandler(this.textBoxForSearch_TextChanged);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 15F);
-            this.label2.Location = new System.Drawing.Point(6, 134);
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 14F);
+            this.label2.Location = new System.Drawing.Point(6, 102);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(155, 31);
+            this.label2.Size = new System.Drawing.Size(150, 30);
             this.label2.TabIndex = 0;
             this.label2.Text = "Введіть назву";
             // 
@@ -232,18 +240,18 @@ namespace magazine._01
             // 
             this.groupBox2.Controls.Add(this.buttonRBTree);
             this.groupBox2.Controls.Add(this.buttonLinerSearch);
-            this.groupBox2.Location = new System.Drawing.Point(391, 424);
+            this.groupBox2.Location = new System.Drawing.Point(776, 246);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(372, 213);
+            this.groupBox2.Size = new System.Drawing.Size(410, 154);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Тип пошуку";
             // 
             // buttonRBTree
             // 
-            this.buttonRBTree.Location = new System.Drawing.Point(33, 123);
+            this.buttonRBTree.Location = new System.Drawing.Point(76, 88);
             this.buttonRBTree.Name = "buttonRBTree";
-            this.buttonRBTree.Size = new System.Drawing.Size(313, 58);
+            this.buttonRBTree.Size = new System.Drawing.Size(271, 41);
             this.buttonRBTree.TabIndex = 3;
             this.buttonRBTree.Text = "Червоно-чорне дерево";
             this.buttonRBTree.UseVisualStyleBackColor = true;
@@ -251,9 +259,9 @@ namespace magazine._01
             // 
             // buttonLinerSearch
             // 
-            this.buttonLinerSearch.Location = new System.Drawing.Point(33, 35);
+            this.buttonLinerSearch.Location = new System.Drawing.Point(76, 41);
             this.buttonLinerSearch.Name = "buttonLinerSearch";
-            this.buttonLinerSearch.Size = new System.Drawing.Size(313, 58);
+            this.buttonLinerSearch.Size = new System.Drawing.Size(271, 41);
             this.buttonLinerSearch.TabIndex = 1;
             this.buttonLinerSearch.Text = "Лінійний пошук";
             this.buttonLinerSearch.UseVisualStyleBackColor = true;
@@ -262,10 +270,10 @@ namespace magazine._01
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(798, 46);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 14F);
+            this.label1.Location = new System.Drawing.Point(886, 419);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(216, 35);
+            this.label1.Size = new System.Drawing.Size(193, 30);
             this.label1.TabIndex = 5;
             this.label1.Text = "Результат пошуку";
             // 
@@ -273,7 +281,7 @@ namespace magazine._01
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(336, 46);
+            this.label3.Location = new System.Drawing.Point(330, 69);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(98, 35);
             this.label3.TabIndex = 6;
@@ -282,37 +290,85 @@ namespace magazine._01
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.Location = new System.Drawing.Point(839, 420);
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 14F);
+            this.label4.Location = new System.Drawing.Point(892, 737);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(148, 35);
+            this.label4.Size = new System.Drawing.Size(129, 30);
             this.label4.TabIndex = 7;
             this.label4.Text = "Час роботи";
             // 
             // labelTime
             // 
             this.labelTime.AutoSize = true;
-            this.labelTime.Location = new System.Drawing.Point(885, 472);
+            this.labelTime.Location = new System.Drawing.Point(1024, 740);
             this.labelTime.Name = "labelTime";
             this.labelTime.Size = new System.Drawing.Size(56, 25);
             this.labelTime.TabIndex = 8;
             this.labelTime.Text = "00:00";
-            this.labelTime.Click += new System.EventHandler(this.labelTime_Click);
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(764, 90);
+            this.richTextBox1.Location = new System.Drawing.Point(776, 462);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(286, 297);
+            this.richTextBox1.Size = new System.Drawing.Size(410, 255);
             this.richTextBox1.TabIndex = 9;
             this.richTextBox1.Text = "";
-            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Location = new System.Drawing.Point(1, 525);
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.RowHeadersWidth = 47;
+            this.dataGridView2.Size = new System.Drawing.Size(769, 255);
+            this.dataGridView2.TabIndex = 10;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label6.Location = new System.Drawing.Point(217, 478);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(332, 35);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Інструменти взяті в оренду ";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(225, 420);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(148, 35);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "Взяти в оренду";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(379, 420);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(148, 35);
+            this.button2.TabIndex = 13;
+            this.button2.Text = "Повернути";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "№";
+            this.Column1.MinimumWidth = 6;
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.Width = 70;
             // 
             // richTextBoxSearchLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 23F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1050, 692);
+            this.ClientSize = new System.Drawing.Size(1193, 796);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.dataGridView2);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.labelTime);
             this.Controls.Add(this.label4);
@@ -320,7 +376,6 @@ namespace magazine._01
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -337,6 +392,7 @@ namespace magazine._01
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -354,10 +410,6 @@ namespace magazine._01
         private System.Windows.Forms.ToolStripMenuItem завантажитиДаніToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem зберегтиРезультатиПошукуToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem вихідToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem алгоритмиПошукуToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem лінійнийПошукToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem бінарнийПошукToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem пошукУЧЧдеревіToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button buttonRBTree;
         private System.Windows.Forms.Button buttonLinerSearch;
@@ -370,6 +422,14 @@ namespace magazine._01
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.TextBox textBoxForCategory;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripButton toolStripButton4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
     }
 }
 

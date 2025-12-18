@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
-using System.IO;
-using System.Diagnostics;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace magazine._01
 {
@@ -34,7 +32,7 @@ namespace magazine._01
         private void Form1_Load(object sender, EventArgs e)
         {
             // Використовуємо універсальний шлях |DataDirectory|
-            sqlConnection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\проекти.0.1\magazine.01\magazine.01\bin\Debug\Database1.mdf;Integrated Security=True;Connect Timeout=30");
+            sqlConnection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Михайло\Desktop\Уник\3 семестр\алг та сд\Курсач\Database1.mdf;Integrated Security=True;Connect Timeout=30");
 
             try
             {
@@ -44,15 +42,25 @@ namespace magazine._01
             {
                 MessageBox.Show("Не вдалося підключитися до БД. Перевірте файл ShopDB.mdf у папці bin/Debug.\n\nПомилка: " + ex.Message);
             }
-
+            
             LoadData();
+            this.dataGridView1.RowPostPaint += dataGridView1_RowPostPaint;
+
+            //ширина первых двух столбцов, остальные равномерно растягиваются
+            dataGridView1.Columns["Column1"].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView1.Columns["Column1"].Width = 70;
+            dataGridView1.Columns["Name"].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView1.Columns["Name"].Width = 150;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            //FillTableWithRandomData(); наполняет бд 10000 случайными записями(надо сделать один раз). уже сделано
         }
 
         private void LoadData()
         {
             try
             {
-                sqlDataAdapter = new SqlDataAdapter("SELECT *, 'Delete' AS [Command] FROM Shop", sqlConnection);
+                sqlDataAdapter = new SqlDataAdapter("SELECT * FROM Shop", sqlConnection);
                 sqlBuilder = new SqlCommandBuilder(sqlDataAdapter);
 
                 sqlBuilder.GetInsertCommand();
@@ -63,18 +71,13 @@ namespace magazine._01
                 sqlDataAdapter.Fill(dataSet, "Shop");
 
                 dataGridView1.DataSource = dataSet.Tables["Shop"];
-
-                for (int i = 0; i < dataGridView1.Rows.Count; i++)
-                {
-                    DataGridViewLinkCell linkCell = new DataGridViewLinkCell();
-                    dataGridView1[6, i] = linkCell;
-                }
+                dataGridView1.Columns["Id"].Visible = false;
 
                 FillAlgorithms();
             }
             catch (Exception ex)
             {
-                // MessageBox.Show("Помилка завантаження: " + ex.Message);
+                MessageBox.Show("Помилка завантаження: " + ex.Message);
             }
         }
 
@@ -141,11 +144,6 @@ namespace magazine._01
                 dataSet.Tables["Shop"].Clear();
                 sqlDataAdapter.Fill(dataSet, "Shop");
                 dataGridView1.DataSource = dataSet.Tables["Shop"];
-                for (int i = 0; i < dataGridView1.Rows.Count; i++)
-                {
-                    DataGridViewLinkCell linkCell = new DataGridViewLinkCell();
-                    dataGridView1[6, i] = linkCell;
-                }
                 FillAlgorithms();
             }
             catch (Exception ex)
@@ -154,7 +152,6 @@ namespace magazine._01
             }
         }
 
-        // === УНІВЕРСАЛЬНИЙ МЕТОД ПОШУКУ ===
         private void PerformSearch(bool isTree)
         {
             // Очистка
@@ -238,63 +235,57 @@ namespace magazine._01
         {
             try
             {
-                if (e.ColumnIndex == 6)
+                // клик не по данным
+                if (e.RowIndex < 0)
+                    return;
+
+                // ====== 1️⃣ КЛИК ПО PhotoPath ======
+                if (dataGridView1.Columns[e.ColumnIndex].Name == "PhotoPath")
                 {
-                    string task = dataGridView1.Rows[e.RowIndex].Cells[6].Value.ToString();
-                    if (task == "Delete")
+                    string relativePath = dataGridView1.Rows[e.RowIndex]
+                                                      .Cells["PhotoPath"]
+                                                      .Value?
+                                                      .ToString();
+
+                    if (string.IsNullOrWhiteSpace(relativePath))
+                        return;
+
+                    string fullPath = Path.Combine(
+                        AppDomain.CurrentDomain.BaseDirectory,
+                        relativePath.Trim()
+                    );
+
+                    if (!File.Exists(fullPath))
                     {
-                        if (MessageBox.Show("Видалити?", "Видалення", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            dataSet.Tables["Shop"].Rows[e.RowIndex].Delete();
-                            sqlDataAdapter.Update(dataSet, "Shop");
-                            ReloadData();
-                        }
+                        MessageBox.Show("Файл фото не найден:\n" + fullPath);
+                        return;
                     }
-                    else if (task == "Insert")
+
+                    Form imgForm = new Form
                     {
-                        int rowIndex = dataGridView1.Rows.Count - 2;
-                        DataRow row = dataSet.Tables["Shop"].NewRow();
-                        row["Name"] = dataGridView1.Rows[rowIndex].Cells["Name"].Value;
-                        row["Category"] = dataGridView1.Rows[rowIndex].Cells["Category"].Value;
-                        row["Price"] = dataGridView1.Rows[rowIndex].Cells["Price"].Value;
-                        row["Number"] = dataGridView1.Rows[rowIndex].Cells["Number"].Value;
-                        row["Producer"] = dataGridView1.Rows[rowIndex].Cells["Producer"].Value;
-                        dataSet.Tables["Shop"].Rows.Add(row);
-                        dataSet.Tables["Shop"].Rows.RemoveAt(dataSet.Tables["Shop"].Rows.Count - 1);
-                        dataGridView1.Rows.RemoveAt(dataGridView1.Rows.Count - 2);
-                        dataGridView1.Rows[e.RowIndex].Cells[6].Value = "Delete";
-                        sqlDataAdapter.Update(dataSet, "Shop");
-                        newRowAdding = false;
-                        ReloadData();
-                    }
-                    else if (task == "Update")
+                        Width = 600,
+                        Height = 600,
+                        Text = "Фото"
+                    };
+
+                    PictureBox pb = new PictureBox
                     {
-                        int r = e.RowIndex;
-                        dataSet.Tables["Shop"].Rows[r]["Name"] = dataGridView1.Rows[r].Cells["Name"].Value;
-                        dataSet.Tables["Shop"].Rows[r]["Category"] = dataGridView1.Rows[r].Cells["Category"].Value;
-                        dataSet.Tables["Shop"].Rows[r]["Price"] = dataGridView1.Rows[r].Cells["Price"].Value;
-                        dataSet.Tables["Shop"].Rows[r]["Number"] = dataGridView1.Rows[r].Cells["Number"].Value;
-                        dataSet.Tables["Shop"].Rows[r]["Producer"] = dataGridView1.Rows[r].Cells["Producer"].Value;
-                        sqlDataAdapter.Update(dataSet, "Shop");
-                        dataGridView1.Rows[e.RowIndex].Cells[6].Value = "Delete";
-                        ReloadData();
-                    }
+                        Dock = DockStyle.Fill,
+                        SizeMode = PictureBoxSizeMode.Zoom,
+                        Image = Image.FromFile(fullPath)
+                    };
+
+                    imgForm.Controls.Add(pb);
+                    imgForm.ShowDialog();
+
+                    return;
                 }
+
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e) => ReloadData();
-
-        private void dataGridView1_UserAddedRow(object sender, DataGridViewRowEventArgs e)
-        {
-            try { if (!newRowAdding) { newRowAdding = true; int last = dataGridView1.Rows.Count - 2; dataGridView1[6, last] = new DataGridViewLinkCell(); dataGridView1.Rows[last].Cells["Command"].Value = "Insert"; } } catch { }
-        }
-
-        private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            try { if (!newRowAdding) { int idx = dataGridView1.SelectedCells[0].RowIndex; dataGridView1[6, idx] = new DataGridViewLinkCell(); dataGridView1.Rows[idx].Cells["Command"].Value = "Update"; } } catch { }
-        }
 
         private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
@@ -311,17 +302,122 @@ namespace magazine._01
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
         }
 
-        private void завантажитиДаніToolStripMenuItem_Click(object sender, EventArgs e) { }
-        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) { }
-        private void textBoxShowSearch_TextChanged(object sender, EventArgs e) { }
-        private void textBoxForSearch_TextChanged(object sender, EventArgs e) { }
-        private void labelTime_Click(object sender, EventArgs e) { }
-        private void richTextBox1_TextChanged(object sender, EventArgs e) { }
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) { }
 
-        private void textBoxForPrice_TextChanged(object sender, EventArgs e)
+        private void toolStripButton1_Click(object sender, EventArgs e)
         {
-
+            using (AddProductForm f = new AddProductForm(dataSet.Tables["Shop"]))
+            {
+                if (f.ShowDialog() == DialogResult.OK)
+                {
+                    dataSet.Tables["Shop"].Rows.Add(f.NewRow);
+                    sqlDataAdapter.Update(dataSet, "Shop");
+                    //RenumberIDs();
+                    ReloadData();
+                }
+            }
         }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            // Перевіряємо, чи є виділений рядок
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Оберіть рядок для редагування!");
+                return;
+            }
+
+            // Беремо перший виділений рядок
+            int rowIndex = dataGridView1.SelectedRows[0].Index;
+
+            // Беремо відповідний DataRow з DataTable
+            DataRow row = dataSet.Tables["Shop"].Rows[rowIndex];
+
+            // Відкриваємо форму редагування
+            using (EditProductForm f = new EditProductForm(row))
+            {
+                if (f.ShowDialog() == DialogResult.OK)
+                {
+                    // Зберігаємо зміни в базу
+                    sqlDataAdapter.Update(dataSet, "Shop");
+
+                    // Оновлюємо DataGridView
+                    ReloadData();
+                }
+            }
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Оберіть рядок для видалення!");
+                return;
+            }
+
+            if (MessageBox.Show($"Видалити {dataGridView1.SelectedRows.Count} обраних елементів?",
+                                "Видалення", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+
+            try
+            {
+                // Проходимо по виділеним рядкам з кінця
+                for (int i = dataGridView1.SelectedRows.Count - 1; i >= 0; i--)
+                {
+                    int rowIndex = dataGridView1.SelectedRows[i].Index;
+                    dataSet.Tables["Shop"].Rows[rowIndex].Delete();
+                }
+
+                // Зберігаємо зміни у базу
+                sqlDataAdapter.Update(dataSet, "Shop");
+
+                //RenumberIDs();
+
+                // Оновлюємо DataGridView
+                ReloadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка видалення: " + ex.Message);
+            }
+        }
+
+        //заполнояет столбец порядкового номера. это не Id. Id хранится в бд, и генерируется автоматически, он не соответствует порядковому номеру. Column1 существует только в dataGridView1(в бд нету)
+        private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            dataGridView1.Rows[e.RowIndex]
+                .Cells["Column1"].Value = e.RowIndex + 1;
+        }
+
+        private void FillTableWithRandomData(int count = 10000)
+        {
+            if (dataSet == null || dataSet.Tables["Shop"] == null)
+                return;
+
+            var table = dataSet.Tables["Shop"];
+            Random rnd = new Random();
+
+            for (int i = 21; i <= count+21; i++)
+            {
+                int catVal = rnd.Next(1, 6); // 1..5
+                int prVal = rnd.Next(100, 50001);
+                prVal = (prVal / 100) * 100; // округление до сотен
+                int prQuan = rnd.Next(10, 101);
+
+                DataRow newRow = table.NewRow();
+                newRow["Name"] = $"product-{i}";
+                newRow["Category"] = $"category-{catVal}";
+                newRow["Price"] = prVal;
+                newRow["Quantity"] = prQuan;
+                newRow["Producer"] = $"producer-{i}";
+
+                table.Rows.Add(newRow);
+            }
+
+            // Сохраняем в базу
+            sqlDataAdapter.Update(table);
+            ReloadData();
+            MessageBox.Show($"{count} записей успешно добавлено!");
+        }
+
     }
 }
