@@ -47,6 +47,7 @@ namespace magazine._01
                     MessageBox.Show("   Ви увійшли!        ", "Успішно", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     // Запускаємо головну форму (richTextBoxSearchLog)
+                    richTextBoxSearchLog.UserName = login;
                     richTextBoxSearchLog frm1 = new richTextBoxSearchLog();
                     this.Hide();
                     frm1.ShowDialog();

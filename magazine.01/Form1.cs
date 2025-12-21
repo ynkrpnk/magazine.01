@@ -1,4 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -15,11 +26,17 @@ namespace magazine._01
     //отстань
     public partial class richTextBoxSearchLog : Form
     {
+        public static string UserName = "";
         private SqlConnection sqlConnection = null;
         private SqlCommandBuilder sqlBuilder = null;
-        private SqlDataAdapter sqlDataAdapter = null;
-        private DataSet dataSet = null;
+        private SqlCommandBuilder rentedSqlBuilder = null;
+        private SqlDataAdapter shopSqlDataAdapter = null;
+        private SqlDataAdapter rentedSqlDataAdapter = null;
+        private DataSet shopDataSet = null;
+        private DataSet rentedDataSet = null;
         private bool newRowAdding = false;
+        private HashSet<object> allCategories = new HashSet<object>();
+        private DataTable rentedTable => rentedDataSet.Tables["Rented"];
 
         private LinearSearch linearAlg = new LinearSearch();
         private RedBlackTree<MusicInstrument> rbTree = new RedBlackTree<MusicInstrument>();
@@ -60,18 +77,35 @@ namespace magazine._01
         {
             try
             {
-                sqlDataAdapter = new SqlDataAdapter("SELECT * FROM Shop", sqlConnection);
-                sqlBuilder = new SqlCommandBuilder(sqlDataAdapter);
+                shopSqlDataAdapter = new SqlDataAdapter("SELECT * FROM Shop", sqlConnection);
+                rentedSqlDataAdapter = new SqlDataAdapter("SELECT * FROM Rented", sqlConnection);
+                // rentedSqlDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                sqlBuilder = new SqlCommandBuilder(shopSqlDataAdapter);
+                rentedSqlBuilder = new SqlCommandBuilder(rentedSqlDataAdapter);
 
                 sqlBuilder.GetInsertCommand();
                 sqlBuilder.GetUpdateCommand();
                 sqlBuilder.GetDeleteCommand();
+                // rentedSqlBuilder.GetUpdateCommand();
 
-                dataSet = new DataSet();
-                sqlDataAdapter.Fill(dataSet, "Shop");
+                shopDataSet = new DataSet();
+                shopSqlDataAdapter.Fill(shopDataSet, "Shop");
+                rentedDataSet = new DataSet();
+                rentedSqlDataAdapter.Fill(rentedDataSet, "Rented");
 
-                dataGridView1.DataSource = dataSet.Tables["Shop"];
+                for (int i = 0; i < shopDataSet.Tables["Shop"].Rows.Count; i++)
+                {
+                    allCategories.Add(shopDataSet.Tables["Shop"].Rows[i].ItemArray[2]);
+                }
+                foreach (var category in allCategories)
+                {
+                    comboBoxCategory.Items.Add(category);
+                }
+
+                dataGridView1.DataSource = shopDataSet.Tables["Shop"];
                 dataGridView1.Columns["Id"].Visible = false;
+                
+                UpdateGrid2();
 
                 FillAlgorithms();
             }
@@ -89,10 +123,10 @@ namespace magazine._01
             rbTree.Clear();
 
             // Перевірка, чи є дані в таблиці
-            if (dataSet == null || dataSet.Tables["Shop"] == null) return;
+            if (shopDataSet == null || shopDataSet.Tables["Shop"] == null) return;
 
             // 2. Проходимо по кожному рядку таблиці
-            foreach (DataRow row in dataSet.Tables["Shop"].Rows)
+            foreach (DataRow row in shopDataSet.Tables["Shop"].Rows)
             {
                 // Пропускаємо видалені рядки (важливо, щоб не виникало помилок)
                 if (row.RowState == DataRowState.Deleted) continue;
@@ -141,9 +175,9 @@ namespace magazine._01
         {
             try
             {
-                dataSet.Tables["Shop"].Clear();
-                sqlDataAdapter.Fill(dataSet, "Shop");
-                dataGridView1.DataSource = dataSet.Tables["Shop"];
+                shopDataSet.Tables["Shop"].Clear();
+                shopSqlDataAdapter.Fill(shopDataSet, "Shop");
+                dataGridView1.DataSource = shopDataSet.Tables["Shop"];
                 FillAlgorithms();
             }
             catch (Exception ex)
@@ -160,7 +194,7 @@ namespace magazine._01
 
             // Читаем напрямую (замените на реальные имена контролов из Designer)
             string nameInput = textBoxForName?.Text.Trim() ?? "";
-            string categoryInput = textBoxForCategory?.Text.Trim() ?? ""; // <- исправьте имя, если оно другое
+            string categoryInput = comboBoxCategory?.Text.Trim() ?? ""; // <- исправьте имя, если оно другое
 
             // Для отладки временно покажите значения
             // MessageBox.Show($"name:'{nameInput}' category:'{categoryInput}'");
@@ -305,12 +339,12 @@ namespace magazine._01
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            using (AddProductForm f = new AddProductForm(dataSet.Tables["Shop"]))
+            using (AddProductForm f = new AddProductForm(shopDataSet.Tables["Shop"], this))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
-                    dataSet.Tables["Shop"].Rows.Add(f.NewRow);
-                    sqlDataAdapter.Update(dataSet, "Shop");
+                    shopDataSet.Tables["Shop"].Rows.Add(f.NewRow);
+                    shopSqlDataAdapter.Update(shopDataSet, "Shop");
                     //RenumberIDs();
                     ReloadData();
                 }
@@ -330,7 +364,7 @@ namespace magazine._01
             int rowIndex = dataGridView1.SelectedRows[0].Index;
 
             // Беремо відповідний DataRow з DataTable
-            DataRow row = dataSet.Tables["Shop"].Rows[rowIndex];
+            DataRow row = shopDataSet.Tables["Shop"].Rows[rowIndex];
 
             // Відкриваємо форму редагування
             using (EditProductForm f = new EditProductForm(row))
@@ -338,7 +372,7 @@ namespace magazine._01
                 if (f.ShowDialog() == DialogResult.OK)
                 {
                     // Зберігаємо зміни в базу
-                    sqlDataAdapter.Update(dataSet, "Shop");
+                    shopSqlDataAdapter.Update(shopDataSet, "Shop");
 
                     // Оновлюємо DataGridView
                     ReloadData();
@@ -364,11 +398,11 @@ namespace magazine._01
                 for (int i = dataGridView1.SelectedRows.Count - 1; i >= 0; i--)
                 {
                     int rowIndex = dataGridView1.SelectedRows[i].Index;
-                    dataSet.Tables["Shop"].Rows[rowIndex].Delete();
+                    shopDataSet.Tables["Shop"].Rows[rowIndex].Delete();
                 }
 
                 // Зберігаємо зміни у базу
-                sqlDataAdapter.Update(dataSet, "Shop");
+                shopSqlDataAdapter.Update(shopDataSet, "Shop");
 
                 //RenumberIDs();
 
@@ -390,10 +424,10 @@ namespace magazine._01
 
         private void FillTableWithRandomData(int count = 10000)
         {
-            if (dataSet == null || dataSet.Tables["Shop"] == null)
+            if (shopDataSet == null || shopDataSet.Tables["Shop"] == null)
                 return;
 
-            var table = dataSet.Tables["Shop"];
+            var table = shopDataSet.Tables["Shop"];
             Random rnd = new Random();
 
             for (int i = 21; i <= count+21; i++)
@@ -414,10 +448,133 @@ namespace magazine._01
             }
 
             // Сохраняем в базу
-            sqlDataAdapter.Update(table);
+            shopSqlDataAdapter.Update(table);
             ReloadData();
             MessageBox.Show($"{count} записей успешно добавлено!");
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int quantity = Convert.ToInt32(dataGridView1.SelectedCells[5].Value);
+                if (quantity <= 0)
+                {
+                    MessageBox.Show("quantity = 0");
+                    return;
+                }
+                
+                // update shop table
+                int rowIndex = dataGridView1.SelectedRows[0].Index;
+                DataRow row = shopDataSet.Tables["Shop"].Rows[rowIndex];
+                row["Quantity"] = quantity - 1;
+                shopSqlDataAdapter.Update(shopDataSet, "Shop");
+
+                int id = Convert.ToInt32(row["Id"]);
+                bool isUpdated = false;
+                for (int i = 0; i < rentedTable.Rows.Count; i++)
+                {
+                    var currentRow = rentedTable.Rows[i];
+                    if (currentRow["UserName"].ToString() == UserName)
+                    {
+                        string serializedList = currentRow["IdsList"].ToString();
+                        var ids = JsonConvert.DeserializeObject<List<string>>(serializedList);
+                        ids.Add(id.ToString());
+                        
+                        // rentedTable.Rows.RemoveAt(i);
+                        // var newRow = rentedTable.NewRow();
+                        // newRow["UserName"] = UserName;
+                        // newRow["IdsList"] = JsonConvert.SerializeObject(ids);
+                        // rentedTable.Rows.Add(newRow);
+                        currentRow["IdsList"] = JsonConvert.SerializeObject(ids);
+                        
+                        isUpdated = true;
+                        break;
+                    }
+                }
+
+                if (!isUpdated)
+                {
+                    var newRow = rentedTable.NewRow();
+                    newRow["UserName"] = UserName;
+                    newRow["IdsList"] = JsonConvert.SerializeObject(new List<string> {id.ToString()});
+                    rentedTable.Rows.Add(newRow);
+                }
+                rentedSqlDataAdapter.Update(rentedDataSet, "Rented");
+                UpdateGrid2();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // update shop table
+                int id = -1;
+                for (int i = 0; i < shopDataSet.Tables["Shop"].Rows.Count; i++)
+                {
+                    var currentShopRow = shopDataSet.Tables["Shop"].Rows[i];
+                    if (currentShopRow["Id"].ToString() == dataGridView2.SelectedRows[0].Cells[0].Value.ToString())
+                    {
+                        id = Convert.ToInt32(currentShopRow["Id"]);
+                        currentShopRow["Quantity"] = Convert.ToInt32(currentShopRow["Quantity"]) + 1;
+                        break;
+                    }
+                }
+                
+                shopSqlDataAdapter.Update(shopDataSet, "Shop");
+                
+                for (int i = 0; i < rentedTable.Rows.Count; i++)
+                {
+                    var currentRow = rentedTable.Rows[i];
+                    if (currentRow["UserName"].ToString() == UserName)
+                    {
+                        string serializedList = currentRow["IdsList"].ToString();
+                        var ids = JsonConvert.DeserializeObject<List<string>>(serializedList);
+                        ids.Remove(id.ToString());
+                        currentRow["IdsList"] = JsonConvert.SerializeObject(ids);
+                        Console.WriteLine($"id: {id}, {currentRow["IdsList"]}");
+                        break;
+                    }
+                }
+                
+                rentedSqlDataAdapter.Update(rentedDataSet, "Rented");
+                UpdateGrid2();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void UpdateGrid2()
+        {
+            for (int i = 0; i < rentedTable.Rows.Count; i++)
+            {
+                if (rentedTable.Rows[i].ItemArray[0].ToString() != UserName) continue;
+                
+                string jsonIdList = rentedTable.Rows[i].ItemArray[1].ToString();
+                List<string> ids = JsonConvert.DeserializeObject<List<string>>(jsonIdList);
+                
+                string idsSql = ids.Aggregate("", (current, id) => current + id + ",");
+                idsSql = idsSql.TrimEnd(',');
+                
+                SqlDataAdapter adapter = new SqlDataAdapter();
+                adapter.SelectCommand = new SqlCommand($"SELECT * FROM Shop WHERE Id IN ({idsSql})", sqlConnection);
+                DataTable table = new DataTable();
+                adapter.Fill(table);
+                dataGridView2.DataSource = table;
+            }
+        }
+
+        public void AddCategory(string category)
+        {
+            allCategories.Add(category);
+            comboBoxCategory.Items.Add(category);
+        }
     }
 }

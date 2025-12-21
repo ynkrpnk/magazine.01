@@ -15,13 +15,15 @@ namespace magazine._01
     {
         private readonly DataTable shopTable;
         private string selectedPhotoFileName = null;
+        private richTextBoxSearchLog mainForm;
 
         public DataRow NewRow { get; private set; }
 
-        public AddProductForm(DataTable table)
+        public AddProductForm(DataTable table, richTextBoxSearchLog mainForm)
         {
             InitializeComponent();
             shopTable = table;
+            this.mainForm = mainForm;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             this.btnSelectPhoto.Click += new System.EventHandler(this.btnSelectPhoto_Click);
@@ -74,6 +76,7 @@ namespace magazine._01
             NewRow["PhotoPath"] = @"img\" + selectedPhotoFileName;
 
             DialogResult = DialogResult.OK;
+            mainForm.AddCategory(txtCategory.Text);
             Close();
         }
 
