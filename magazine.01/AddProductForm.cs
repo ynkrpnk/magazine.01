@@ -27,6 +27,7 @@ namespace magazine._01
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             this.btnSelectPhoto.Click += new System.EventHandler(this.btnSelectPhoto_Click);
+            comboBoxCategory.DataSource = mainForm.AllCategories;
         }
 
 
@@ -69,14 +70,14 @@ namespace magazine._01
             NewRow = shopTable.NewRow();
 
             NewRow["Name"] = txtName.Text;
-            NewRow["Category"] = txtCategory.Text;
+            NewRow["Category"] = comboBoxCategory.Text;
             NewRow["Price"] = numPrice.Value;
             NewRow["Quantity"] = numNumber.Value;
             NewRow["Producer"] = txtProducer.Text;
             NewRow["PhotoPath"] = @"img\" + selectedPhotoFileName;
 
             DialogResult = DialogResult.OK;
-            mainForm.AddCategory(txtCategory.Text);
+            mainForm.AddCategory(comboBoxCategory.Text);
             Close();
         }
 

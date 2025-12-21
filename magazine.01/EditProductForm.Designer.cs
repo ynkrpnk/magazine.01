@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.txtName = new System.Windows.Forms.TextBox();
-            this.txtCategory = new System.Windows.Forms.TextBox();
             this.txtPhoto = new System.Windows.Forms.TextBox();
             this.txtProducer = new System.Windows.Forms.TextBox();
             this.numPrice = new System.Windows.Forms.NumericUpDown();
@@ -44,6 +43,7 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
+            this.txtCategory = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numPrice)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numNumber)).BeginInit();
             this.SuspendLayout();
@@ -53,23 +53,15 @@
             this.txtName.Font = new System.Drawing.Font("Segoe UI", 9.818182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtName.Location = new System.Drawing.Point(185, 32);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(185, 27);
+            this.txtName.Size = new System.Drawing.Size(185, 25);
             this.txtName.TabIndex = 0;
-            // 
-            // txtCategory
-            // 
-            this.txtCategory.Font = new System.Drawing.Font("Segoe UI", 9.818182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCategory.Location = new System.Drawing.Point(185, 75);
-            this.txtCategory.Name = "txtCategory";
-            this.txtCategory.Size = new System.Drawing.Size(185, 27);
-            this.txtCategory.TabIndex = 1;
             // 
             // txtPhoto
             // 
             this.txtPhoto.Font = new System.Drawing.Font("Segoe UI", 9.818182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPhoto.Location = new System.Drawing.Point(185, 322);
             this.txtPhoto.Name = "txtPhoto";
-            this.txtPhoto.Size = new System.Drawing.Size(185, 27);
+            this.txtPhoto.Size = new System.Drawing.Size(185, 25);
             this.txtPhoto.TabIndex = 2;
             // 
             // txtProducer
@@ -77,33 +69,25 @@
             this.txtProducer.Font = new System.Drawing.Font("Segoe UI", 9.818182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtProducer.Location = new System.Drawing.Point(185, 119);
             this.txtProducer.Name = "txtProducer";
-            this.txtProducer.Size = new System.Drawing.Size(185, 27);
+            this.txtProducer.Size = new System.Drawing.Size(185, 25);
             this.txtProducer.TabIndex = 3;
             // 
             // numPrice
             // 
             this.numPrice.Font = new System.Drawing.Font("Segoe UI", 9.818182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.numPrice.Location = new System.Drawing.Point(185, 165);
-            this.numPrice.Maximum = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
+            this.numPrice.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
             this.numPrice.Name = "numPrice";
-            this.numPrice.Size = new System.Drawing.Size(104, 27);
+            this.numPrice.Size = new System.Drawing.Size(104, 25);
             this.numPrice.TabIndex = 4;
             // 
             // numNumber
             // 
             this.numNumber.Font = new System.Drawing.Font("Segoe UI", 9.818182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.numNumber.Location = new System.Drawing.Point(185, 210);
-            this.numNumber.Maximum = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
+            this.numNumber.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
             this.numNumber.Name = "numNumber";
-            this.numNumber.Size = new System.Drawing.Size(104, 27);
+            this.numNumber.Size = new System.Drawing.Size(104, 25);
             this.numNumber.TabIndex = 5;
             // 
             // label1
@@ -112,7 +96,7 @@
             this.label1.Font = new System.Drawing.Font("Segoe UI", 13.74545F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(38, 27);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 30);
+            this.label1.Size = new System.Drawing.Size(67, 25);
             this.label1.TabIndex = 6;
             this.label1.Text = "Назва:";
             // 
@@ -122,7 +106,7 @@
             this.label2.Font = new System.Drawing.Font("Segoe UI", 13.74545F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(38, 72);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(109, 30);
+            this.label2.Size = new System.Drawing.Size(99, 25);
             this.label2.TabIndex = 7;
             this.label2.Text = "Категорія:";
             // 
@@ -132,7 +116,7 @@
             this.label3.Font = new System.Drawing.Font("Segoe UI", 13.74545F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(38, 162);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(62, 30);
+            this.label3.Size = new System.Drawing.Size(56, 25);
             this.label3.TabIndex = 8;
             this.label3.Text = "Ціна:";
             // 
@@ -142,7 +126,7 @@
             this.label4.Font = new System.Drawing.Font("Segoe UI", 13.74545F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(38, 208);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(102, 30);
+            this.label4.Size = new System.Drawing.Size(93, 25);
             this.label4.TabIndex = 9;
             this.label4.Text = "Кількість:";
             // 
@@ -152,7 +136,7 @@
             this.label5.Font = new System.Drawing.Font("Segoe UI", 13.74545F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(38, 261);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(66, 30);
+            this.label5.Size = new System.Drawing.Size(60, 25);
             this.label5.TabIndex = 10;
             this.label5.Text = "Фото:";
             // 
@@ -162,7 +146,7 @@
             this.label6.Font = new System.Drawing.Font("Segoe UI", 13.74545F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(38, 116);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(112, 30);
+            this.label6.Size = new System.Drawing.Size(102, 25);
             this.label6.TabIndex = 11;
             this.label6.Text = "Виробник:";
             // 
@@ -202,15 +186,24 @@
             this.label7.Font = new System.Drawing.Font("Segoe UI", 11.78182F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.Location = new System.Drawing.Point(38, 321);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(131, 25);
+            this.label7.Size = new System.Drawing.Size(108, 21);
             this.label7.TabIndex = 15;
             this.label7.Text = "Обране фото:";
+            // 
+            // txtCategory
+            // 
+            this.txtCategory.FormattingEnabled = true;
+            this.txtCategory.Location = new System.Drawing.Point(184, 76);
+            this.txtCategory.Name = "txtCategory";
+            this.txtCategory.Size = new System.Drawing.Size(185, 21);
+            this.txtCategory.TabIndex = 16;
             // 
             // EditProductForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(423, 470);
+            this.Controls.Add(this.txtCategory);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
@@ -225,7 +218,6 @@
             this.Controls.Add(this.numPrice);
             this.Controls.Add(this.txtProducer);
             this.Controls.Add(this.txtPhoto);
-            this.Controls.Add(this.txtCategory);
             this.Controls.Add(this.txtName);
             this.Name = "EditProductForm";
             this.Text = "Редагування елементу";
@@ -233,13 +225,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.numNumber)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
+
+        private System.Windows.Forms.ComboBox txtCategory;
 
         #endregion
 
         private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.TextBox txtCategory;
         private System.Windows.Forms.TextBox txtPhoto;
         private System.Windows.Forms.TextBox txtProducer;
         private System.Windows.Forms.NumericUpDown numPrice;

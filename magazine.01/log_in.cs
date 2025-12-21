@@ -27,6 +27,8 @@ namespace magazine._01
         {
             var login = loginUser.Text.Trim();
             var pass = passUser.Text.Trim();
+            // login = "admin";
+            // pass = "admin";
 
             SqlDataAdapter adapter = new SqlDataAdapter();
             DataTable table = new DataTable();
@@ -38,23 +40,32 @@ namespace magazine._01
 
             adapter.SelectCommand = command;
 
-            adapter.Fill(table);
-
-            if (table.Rows.Count == 1)
+            try
             {
-                MessageBox.Show("   Ви увійшли!        ", "Успішно", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                adapter.Fill(table);
 
-                // Запускаємо головну форму (richTextBoxSearchLog)
-                richTextBoxSearchLog.UserName = login;
-                richTextBoxSearchLog frm1 = new richTextBoxSearchLog();
-                this.Hide();
-                frm1.ShowDialog();
-                // Закриваємо програму після закриття головної форми
-                Application.Exit();
+                if (table.Rows.Count == 1)
+                {
+                    MessageBox.Show("   Ви увійшли!        ", "Успішно", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    // Запускаємо головну форму (richTextBoxSearchLog)
+                    richTextBoxSearchLog.UserName = login;
+                    richTextBoxSearchLog frm1 = new richTextBoxSearchLog();
+                    this.Hide();
+                    frm1.ShowDialog();
+                    // Закриваємо програму після закриття головної форми
+                    Application.Exit();
+                }
+                else
+                {
+                    MessageBox.Show("   Такого акаунта не існує!    ", "Помилка", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("   Такого акаунта не існує!    ", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(ex.Message);
             }
         }
 

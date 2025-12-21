@@ -9,11 +9,15 @@ namespace magazine._01
     {
         private readonly DataRow rowToEdit;
         private string selectedPhotoFileName = null;
+        private richTextBoxSearchLog mainForm;
 
-        public EditProductForm(DataRow row)
+        public EditProductForm(DataRow row, richTextBoxSearchLog mainForm)
         {
             InitializeComponent();
             rowToEdit = row;
+            this.mainForm = mainForm;
+
+            txtCategory.DataSource = mainForm.AllCategories;
 
             // Заповнюємо поля значеннями з рядка
             txtName.Text = row["Name"].ToString();

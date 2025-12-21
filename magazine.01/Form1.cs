@@ -6,19 +6,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
+using System.ComponentModel;
 
 namespace magazine._01
 {
@@ -27,6 +17,11 @@ namespace magazine._01
     public partial class richTextBoxSearchLog : Form
     {
         public static string UserName = "";
+        
+        public BindingList<string> AllCategories = new BindingList<string>();
+        
+        private Dictionary<string, int> categoryCount = new Dictionary<string, int>();
+        
         private SqlConnection sqlConnection = null;
         private SqlCommandBuilder sqlBuilder = null;
         private SqlCommandBuilder rentedSqlBuilder = null;
@@ -35,7 +30,6 @@ namespace magazine._01
         private DataSet shopDataSet = null;
         private DataSet rentedDataSet = null;
         private bool newRowAdding = false;
-        private HashSet<object> allCategories = new HashSet<object>();
         private DataTable rentedTable => rentedDataSet.Tables["Rented"];
 
         private LinearSearch linearAlg = new LinearSearch();
@@ -96,12 +90,9 @@ namespace magazine._01
 
                 for (int i = 0; i < shopDataSet.Tables["Shop"].Rows.Count; i++)
                 {
-                    allCategories.Add(shopDataSet.Tables["Shop"].Rows[i].ItemArray[2]);
+                    AddCategory(shopDataSet.Tables["Shop"].Rows[i].ItemArray[2].ToString());
                 }
-                foreach (var category in allCategories)
-                {
-                    comboBoxCategory.Items.Add(category);
-                }
+                comboBoxCategory.DataSource = AllCategories;
 
                 dataGridView1.DataSource = shopDataSet.Tables["Shop"];
                 dataGridView1.Columns["Id"].Visible = false;
@@ -368,7 +359,7 @@ namespace magazine._01
             DataRow row = shopDataSet.Tables["Shop"].Rows[rowIndex];
 
             // Відкриваємо форму редагування
-            using (EditProductForm f = new EditProductForm(row))
+            using (EditProductForm f = new EditProductForm(row, this))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
@@ -381,6 +372,7 @@ namespace magazine._01
             }
         }
 
+        // delete button
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 0)
@@ -399,7 +391,9 @@ namespace magazine._01
                 for (int i = dataGridView1.SelectedRows.Count - 1; i >= 0; i--)
                 {
                     int rowIndex = dataGridView1.SelectedRows[i].Index;
-                    shopDataSet.Tables["Shop"].Rows[rowIndex].Delete();
+                    DataRow row = shopDataSet.Tables["Shop"].Rows[rowIndex];
+                    DecrementCategory(row["Category"].ToString());
+                    row.Delete();
                 }
 
                 // Зберігаємо зміни у базу
@@ -456,46 +450,53 @@ namespace magazine._01
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int quantity = Convert.ToInt32(dataGridView1.SelectedCells[5].Value);
-            if (quantity <= 0)
+            try
             {
-                MessageBox.Show("quantity = 0");
-                return;
-            }
-                
-            // update shop table
-            int rowIndex = dataGridView1.SelectedRows[0].Index;
-            DataRow row = shopDataSet.Tables["Shop"].Rows[rowIndex];
-            row["Quantity"] = quantity - 1;
-            shopSqlDataAdapter.Update(shopDataSet, "Shop"); // Fill
-
-            int id = Convert.ToInt32(row["Id"]);
-            bool isUpdated = false;
-            for (int i = 0; i < rentedTable.Rows.Count; i++)
-            {
-                var currentRow = rentedTable.Rows[i];
-                if (currentRow["UserName"].ToString() == UserName)
+                int quantity = Convert.ToInt32(dataGridView1.SelectedCells[5].Value);
+                if (quantity <= 0)
                 {
-                    string serializedList = currentRow["IdsList"].ToString();
-                    var ids = JsonConvert.DeserializeObject<List<string>>(serializedList);
-                    ids.Add(id.ToString());
-                    currentRow["IdsList"] = JsonConvert.SerializeObject(ids);
-                        
-                    isUpdated = true;
-                    rentedSqlDataAdapter.Update(rentedDataSet, "Rented");
-                    break;
+                    MessageBox.Show("quantity = 0");
+                    return;
                 }
-            }
 
-            if (!isUpdated)
-            {
-                var newRow = rentedTable.NewRow();
-                newRow["UserName"] = UserName;
-                newRow["IdsList"] = JsonConvert.SerializeObject(new List<string> {id.ToString()});
-                rentedTable.Rows.Add(newRow);
+                // update shop table
+                int rowIndex = dataGridView1.SelectedRows[0].Index;
+                DataRow row = shopDataSet.Tables["Shop"].Rows[rowIndex];
+                row["Quantity"] = quantity - 1;
+                shopSqlDataAdapter.Update(shopDataSet, "Shop");
+
+                int id = Convert.ToInt32(row["Id"]);
+                bool isUpdated = false;
+                for (int i = 0; i < rentedTable.Rows.Count; i++)
+                {
+                    var currentRow = rentedTable.Rows[i];
+                    if (currentRow["UserName"].ToString() == UserName)
+                    {
+                        string serializedList = currentRow["IdsList"].ToString();
+                        var ids = JsonConvert.DeserializeObject<List<string>>(serializedList);
+                        ids.Add(id.ToString());
+                        currentRow["IdsList"] = JsonConvert.SerializeObject(ids);
+
+                        isUpdated = true;
+                        rentedSqlDataAdapter.Update(rentedDataSet, "Rented");
+                        break;
+                    }
+                }
+
+                if (!isUpdated)
+                {
+                    var newRow = rentedTable.NewRow();
+                    newRow["UserName"] = UserName;
+                    newRow["IdsList"] = JsonConvert.SerializeObject(new List<string> { id.ToString() });
+                    rentedTable.Rows.Add(newRow);
+                }
+
+                UpdateGrid2();
             }
-            
-            UpdateGrid2();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -540,11 +541,13 @@ namespace magazine._01
             }
         }
 
+        private bool IsAdmin() => UserName == "admin";
+        
         private void UpdateGrid2()
         {
             for (int i = 0; i < rentedTable.Rows.Count; i++)
             {
-                if (rentedTable.Rows[i].ItemArray[0].ToString() != UserName) continue;
+                if (rentedTable.Rows[i].ItemArray[0].ToString() != UserName && !IsAdmin()) continue;
                 
                 string jsonIdList = rentedTable.Rows[i].ItemArray[1].ToString();
                 List<string> ids = JsonConvert.DeserializeObject<List<string>>(jsonIdList);
@@ -567,8 +570,33 @@ namespace magazine._01
 
         public void AddCategory(string category)
         {
-            allCategories.Add(category);
-            comboBoxCategory.Items.Add(category);
+            if (categoryCount.ContainsKey(category))
+            {
+                categoryCount[category]++;
+            }
+            else
+            {
+                categoryCount.Add(category, 1);
+            }
+            
+            if (!AllCategories.Contains(category))
+            {
+                AllCategories.Add(category);
+            }
+        }
+
+        public void DecrementCategory(string category)
+        {
+            if (!categoryCount.ContainsKey(category)) return;
+            
+            categoryCount[category]--;
+            Console.WriteLine(categoryCount[category]);
+
+            if (categoryCount[category] < 1)
+            {
+                AllCategories.Remove(category);
+                Console.WriteLine("Removed " + category);
+            }
         }
     }
 }
