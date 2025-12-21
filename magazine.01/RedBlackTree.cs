@@ -1,9 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text; // Необхідно для StringBuilder
 
 namespace magazine._01
 {
+    public struct HashKey
+    {
+        public ulong Hash;
+        public string Original;
+
+        public HashKey(ulong hash, string original)
+        {
+            Hash = hash;
+            Original = original;
+        }
+
+        public static int Compare(HashKey a, HashKey b)
+        {
+            int hashCompare = a.Hash.CompareTo(b.Hash);
+            if (hashCompare != 0) return hashCompare;
+
+            return string.Compare(a.Original, b.Original, StringComparison.Ordinal);
+        }
+    }
+
+
     // Перелік кольорів вузла
     public enum NodeColor
     {
@@ -13,14 +35,14 @@ namespace magazine._01
     // Клас Вузла
     public class Node<T>
     {
-        public int Key;         // ID (використовується для побудови дерева)
+        public HashKey Key;         // Хеш (використовується для побудови дерева)
         public T Value;         // Саме значення (MusicInstrument)
         public NodeColor Color;
         public Node<T> Parent;
         public Node<T> Left;
         public Node<T> Right;
 
-        public Node(int key, T value, NodeColor color)
+        public Node(HashKey key, T value, NodeColor color)
         {
             Key = key;
             Value = value;
@@ -44,14 +66,16 @@ namespace magazine._01
         public Node<T> Root;
 
         // Спеціальний "порожній" вузол (Sentinel)
-        public static readonly Node<T> NullNode = new Node<T>(-1, default(T), NodeColor.Black);
+        public static readonly Node<T> NullNode =
+    new Node<T>(new HashKey(0, ""), default(T), NodeColor.Black);
+
 
         public RedBlackTree()
         {
             Root = NullNode;
         }
 
-        public RedBlackTree(int initialKey, T initialValue)
+        public RedBlackTree(HashKey initialKey, T initialValue)
         {
             Root = new Node<T>(initialKey, initialValue, NodeColor.Black)
             {
@@ -66,72 +90,61 @@ namespace magazine._01
 
         public (string els, string log) Find(string name, string category)
         {
-            StringBuilder sb = new StringBuilder();
             StringBuilder els = new StringBuilder();
-
-            sb.AppendLine("Дерево відсортоване по ID, робимо повний обхід");
-
+            StringBuilder log = new StringBuilder();
             int steps = 0;
             int matches = 0;
 
-            // Запуск рекурсивного обхода
-            SearchRecursiveNameCategory(Root, name, category, sb, els, ref steps, ref matches);
+            string searchCategory = category ?? string.Empty;
+            ulong hash = Hash(name);
+            HashKey searchKey = new HashKey(hash, name);
 
-            if (matches == 0)
+            Node<T> current = Root;
+
+            while (current != NullNode)
             {
-                sb.AppendLine(" -> Не знайдено жодного елемента.");
-            }
-            else
-            {
-                sb.AppendLine($" -> Знайдено {matches} збіг(ів). Всього кроків: {steps}.");
-            }
+                steps++;
+                int compare = HashKey.Compare(searchKey, current.Key);
 
-            return (els.ToString(), sb.ToString());
-        }
-
-        private void SearchRecursiveNameCategory(
-            Node<T> node,
-            string searchName,
-            string searchCategory,
-            StringBuilder log,
-            StringBuilder els,
-            ref int steps,
-            ref int matches)
-        {
-            if (node == NullNode) return;
-
-            steps++;
-
-            // Приводим значение к MusicInstrument
-            MusicInstrument item = node.Value as MusicInstrument;
-            if (item != null)
-            {
-                string itemName = item.Name ?? string.Empty;
-                string itemCategory = item.Category ?? string.Empty;
-
-                string name = searchName ?? string.Empty;
-                string category = searchCategory ?? string.Empty;
-
-                bool nameMatch = itemName.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0;
-                bool categoryMatch = itemCategory.IndexOf(category, StringComparison.OrdinalIgnoreCase) >= 0;
-
-                if (nameMatch && categoryMatch)
+                if (compare < 0)
                 {
-                    matches++;
+                    current = current.Left;
+                }
+                else if (compare > 0)
+                {
+                    current = current.Right;
+                }
+                else
+                {
+                    // Хеш совпал — проверяем категорию
+                    MusicInstrument item = current.Value as MusicInstrument;
+                    if (item != null)
+                    {
+                        bool categoryMatch = string.IsNullOrEmpty(searchCategory) ||
+                                             item.Category.Equals(searchCategory, StringComparison.OrdinalIgnoreCase);
 
-                    log.AppendLine(
-                        $" -> ЗНАЙДЕНО: ID={item.Id}, Name=\"{item.Name}\", Category=\"{item.Category}\", Price={item.Price}");
+                        if (categoryMatch)
+                        {
+                            matches++;
+                            log.AppendLine(
+                                $" -> ЗНАЙДЕНО: ID={item.Id}, Name=\"{item.Name}\", Category=\"{item.Category}\", Price={item.Price}");
+                            els.AppendLine($"ЗНАЙДЕНО: {item.Name} (Ціна: {item.Price})");
+                        }
+                    }
 
-                    els.AppendLine($"ЗНАЙДЕНО: {item.Name} (Ціна: {item.Price})");
+                    break; // после проверки категории выходим, других совпадений быть не может
                 }
             }
 
-            // Идём влево
-            SearchRecursiveNameCategory(node.Left, searchName, searchCategory, log, els, ref steps, ref matches);
+            if (matches == 0)
+                log.AppendLine(" -> Не знайдено жодного елемента.");
+            else
+                log.AppendLine($" -> Знайдено {matches} збіг(ів). Всього кроків: {steps}.");
 
-            // Идём вправо
-            SearchRecursiveNameCategory(node.Right, searchName, searchCategory, log, els, ref steps, ref matches);
+            return (els.ToString(), log.ToString());
         }
+
+
 
 
 
@@ -139,12 +152,30 @@ namespace magazine._01
         //            СТАНДАРТНІ МЕТОДИ (ВСТАВКА, ВИДАЛЕННЯ)
         // =========================================================
 
+        public static ulong Hash(string input)
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+                return BitConverter.ToUInt64(hash, 0);
+            }
+        }
+
         public void Clear()
         {
             Root = NullNode;
         }
 
-        public void Insert(int key, T value)
+        public void Insert(string keyString, T value)
+        {
+            ulong hash = Hash(keyString);
+            HashKey key = new HashKey(hash, keyString);
+
+            InsertKey(key, value);
+        }
+
+        private void InsertKey(HashKey key, T value)
         {
             Node<T> newNode = new Node<T>(key, value, NodeColor.Red)
             {
@@ -152,7 +183,7 @@ namespace magazine._01
                 Right = NullNode
             };
 
-            if (Root == NullNode || Root is null)
+            if (Root == NullNode)
             {
                 newNode.Color = NodeColor.Black;
                 Root = newNode;
@@ -165,25 +196,33 @@ namespace magazine._01
             while (current != NullNode)
             {
                 parent = current;
-                if (newNode.Key < current.Key) current = current.Left;
-                else if (newNode.Key > current.Key) current = current.Right;
-                else throw new Exception($"Key {newNode.Key} is already present");
+
+                int compare = HashKey.Compare(key, current.Key);
+
+                if (compare < 0)
+                {
+                    current = current.Left;
+                }
+                else if (compare > 0)
+                {
+                    current = current.Right;
+                }
+                else
+                {
+                    throw new Exception("Duplicate key detected: identical string");
+                }
             }
 
             newNode.Parent = parent;
-            if (parent == null) Root = newNode;
-            else if (newNode.Key < parent.Key) parent.Left = newNode;
-            else parent.Right = newNode;
 
-            if (newNode.Parent == null)
-            {
-                newNode.Color = NodeColor.Black;
-                return;
-            }
-            if (newNode.Parent.Parent == null) return;
+            if (HashKey.Compare(key, parent.Key) < 0)
+                parent.Left = newNode;
+            else
+                parent.Right = newNode;
 
             FixInsert(newNode);
         }
+
 
         private void FixInsert(Node<T> k)
         {
@@ -238,24 +277,40 @@ namespace magazine._01
         }
 
         // --- Методи для видалення (потрібні для коректної роботи GridView) ---
-        public void Delete(int key)
+        public void Delete(string keyString)
         {
+            ulong hash = Hash(keyString);
+            HashKey key = new HashKey(hash, keyString);
+
             try
             {
-                DeleteNode(FindNode(key, Root));
+                Node<T> node = FindNode(key, Root);
+                DeleteNode(node);
             }
-            catch (KeyNotFoundException) { }
+            catch (KeyNotFoundException)
+            {
+                // Можно проигнорировать или вывести сообщение
+            }
         }
 
-        private Node<T> FindNode(int key, Node<T> current)
+
+        private Node<T> FindNode(HashKey key, Node<T> current)
         {
-            while (true)
+            while (current != NullNode)
             {
-                if (current == NullNode) throw new KeyNotFoundException();
-                if (current.Key == key) return current;
-                current = current.Key < key ? current.Right : current.Left;
+                int compare = HashKey.Compare(key, current.Key);
+
+                if (compare == 0)
+                    return current;
+                else if (compare < 0)
+                    current = current.Left;
+                else
+                    current = current.Right;
             }
+
+            throw new KeyNotFoundException();
         }
+
 
         private void DeleteNode(Node<T> node)
         {
