@@ -482,6 +482,7 @@ namespace magazine._01
                     currentRow["IdsList"] = JsonConvert.SerializeObject(ids);
                         
                     isUpdated = true;
+                    rentedSqlDataAdapter.Update(rentedDataSet, "Rented");
                     break;
                 }
             }
@@ -493,7 +494,7 @@ namespace magazine._01
                 newRow["IdsList"] = JsonConvert.SerializeObject(new List<string> {id.ToString()});
                 rentedTable.Rows.Add(newRow);
             }
-            rentedSqlDataAdapter.Update(rentedDataSet, "Rented"); /////
+            
             UpdateGrid2();
         }
 
