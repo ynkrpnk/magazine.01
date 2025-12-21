@@ -44,6 +44,7 @@ namespace magazine._01
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboBoxCategory = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.textBoxForName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -59,7 +60,6 @@ namespace magazine._01
             this.label6 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.comboBoxCategory = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -198,6 +198,14 @@ namespace magazine._01
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Пошук";
             // 
+            // comboBoxCategory
+            // 
+            this.comboBoxCategory.FormattingEnabled = true;
+            this.comboBoxCategory.Location = new System.Drawing.Point(214, 43);
+            this.comboBoxCategory.Name = "comboBoxCategory";
+            this.comboBoxCategory.Size = new System.Drawing.Size(170, 28);
+            this.comboBoxCategory.TabIndex = 4;
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -331,6 +339,7 @@ namespace magazine._01
             this.button1.TabIndex = 12;
             this.button1.Text = "Взяти в оренду";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
@@ -340,14 +349,7 @@ namespace magazine._01
             this.button2.TabIndex = 13;
             this.button2.Text = "Повернути";
             this.button2.UseVisualStyleBackColor = true;
-            // 
-            // comboBoxCategory
-            // 
-            this.comboBoxCategory.FormattingEnabled = true;
-            this.comboBoxCategory.Location = new System.Drawing.Point(214, 43);
-            this.comboBoxCategory.Name = "comboBoxCategory";
-            this.comboBoxCategory.Size = new System.Drawing.Size(170, 28);
-            this.comboBoxCategory.TabIndex = 4;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // richTextBoxSearchLog
             // 

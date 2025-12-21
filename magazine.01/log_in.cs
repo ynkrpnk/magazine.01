@@ -38,30 +38,23 @@ namespace magazine._01
 
             adapter.SelectCommand = command;
 
-            try
+            adapter.Fill(table);
+
+            if (table.Rows.Count == 1)
             {
-                adapter.Fill(table);
+                MessageBox.Show("   Ви увійшли!        ", "Успішно", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                if (table.Rows.Count == 1)
-                {
-                    MessageBox.Show("   Ви увійшли!        ", "Успішно", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    // Запускаємо головну форму (richTextBoxSearchLog)
-                    richTextBoxSearchLog.UserName = login;
-                    richTextBoxSearchLog frm1 = new richTextBoxSearchLog();
-                    this.Hide();
-                    frm1.ShowDialog();
-                    // Закриваємо програму після закриття головної форми
-                    Application.Exit();
-                }
-                else
-                {
-                    MessageBox.Show("   Такого акаунта не існує!    ", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
+                // Запускаємо головну форму (richTextBoxSearchLog)
+                richTextBoxSearchLog.UserName = login;
+                richTextBoxSearchLog frm1 = new richTextBoxSearchLog();
+                this.Hide();
+                frm1.ShowDialog();
+                // Закриваємо програму після закриття головної форми
+                Application.Exit();
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Помилка БД: " + ex.Message);
+                MessageBox.Show("   Такого акаунта не існує!    ", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 

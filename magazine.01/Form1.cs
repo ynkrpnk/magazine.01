@@ -49,7 +49,7 @@ namespace magazine._01
         private void Form1_Load(object sender, EventArgs e)
         {
             // Використовуємо універсальний шлях |DataDirectory|
-            sqlConnection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Михайло\Desktop\Уник\3 семестр\алг та сд\Курсач\Database1.mdf;Integrated Security=True;Connect Timeout=30");
+            sqlConnection = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={DataBase.MdfFilePath};Integrated Security=True;Connect Timeout=30");
 
             try
             {
@@ -82,6 +82,7 @@ namespace magazine._01
                 // rentedSqlDataAdapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
                 sqlBuilder = new SqlCommandBuilder(shopSqlDataAdapter);
                 rentedSqlBuilder = new SqlCommandBuilder(rentedSqlDataAdapter);
+                rentedSqlBuilder.ConflictOption = ConflictOption.OverwriteChanges;
 
                 sqlBuilder.GetInsertCommand();
                 sqlBuilder.GetUpdateCommand();
@@ -455,58 +456,45 @@ namespace magazine._01
 
         private void button1_Click(object sender, EventArgs e)
         {
-            try
+            int quantity = Convert.ToInt32(dataGridView1.SelectedCells[5].Value);
+            if (quantity <= 0)
             {
-                int quantity = Convert.ToInt32(dataGridView1.SelectedCells[5].Value);
-                if (quantity <= 0)
-                {
-                    MessageBox.Show("quantity = 0");
-                    return;
-                }
+                MessageBox.Show("quantity = 0");
+                return;
+            }
                 
-                // update shop table
-                int rowIndex = dataGridView1.SelectedRows[0].Index;
-                DataRow row = shopDataSet.Tables["Shop"].Rows[rowIndex];
-                row["Quantity"] = quantity - 1;
-                shopSqlDataAdapter.Update(shopDataSet, "Shop");
+            // update shop table
+            int rowIndex = dataGridView1.SelectedRows[0].Index;
+            DataRow row = shopDataSet.Tables["Shop"].Rows[rowIndex];
+            row["Quantity"] = quantity - 1;
+            shopSqlDataAdapter.Update(shopDataSet, "Shop"); // Fill
 
-                int id = Convert.ToInt32(row["Id"]);
-                bool isUpdated = false;
-                for (int i = 0; i < rentedTable.Rows.Count; i++)
-                {
-                    var currentRow = rentedTable.Rows[i];
-                    if (currentRow["UserName"].ToString() == UserName)
-                    {
-                        string serializedList = currentRow["IdsList"].ToString();
-                        var ids = JsonConvert.DeserializeObject<List<string>>(serializedList);
-                        ids.Add(id.ToString());
-                        
-                        // rentedTable.Rows.RemoveAt(i);
-                        // var newRow = rentedTable.NewRow();
-                        // newRow["UserName"] = UserName;
-                        // newRow["IdsList"] = JsonConvert.SerializeObject(ids);
-                        // rentedTable.Rows.Add(newRow);
-                        currentRow["IdsList"] = JsonConvert.SerializeObject(ids);
-                        
-                        isUpdated = true;
-                        break;
-                    }
-                }
-
-                if (!isUpdated)
-                {
-                    var newRow = rentedTable.NewRow();
-                    newRow["UserName"] = UserName;
-                    newRow["IdsList"] = JsonConvert.SerializeObject(new List<string> {id.ToString()});
-                    rentedTable.Rows.Add(newRow);
-                }
-                rentedSqlDataAdapter.Update(rentedDataSet, "Rented");
-                UpdateGrid2();
-            }
-            catch (Exception ex)
+            int id = Convert.ToInt32(row["Id"]);
+            bool isUpdated = false;
+            for (int i = 0; i < rentedTable.Rows.Count; i++)
             {
-                MessageBox.Show(ex.Message);
+                var currentRow = rentedTable.Rows[i];
+                if (currentRow["UserName"].ToString() == UserName)
+                {
+                    string serializedList = currentRow["IdsList"].ToString();
+                    var ids = JsonConvert.DeserializeObject<List<string>>(serializedList);
+                    ids.Add(id.ToString());
+                    currentRow["IdsList"] = JsonConvert.SerializeObject(ids);
+                        
+                    isUpdated = true;
+                    break;
+                }
             }
+
+            if (!isUpdated)
+            {
+                var newRow = rentedTable.NewRow();
+                newRow["UserName"] = UserName;
+                newRow["IdsList"] = JsonConvert.SerializeObject(new List<string> {id.ToString()});
+                rentedTable.Rows.Add(newRow);
+            }
+            rentedSqlDataAdapter.Update(rentedDataSet, "Rented"); /////
+            UpdateGrid2();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -564,7 +552,12 @@ namespace magazine._01
                 idsSql = idsSql.TrimEnd(',');
                 
                 SqlDataAdapter adapter = new SqlDataAdapter();
-                adapter.SelectCommand = new SqlCommand($"SELECT * FROM Shop WHERE Id IN ({idsSql})", sqlConnection);
+                string cmdText = $"SELECT * FROM Shop WHERE Id IN ({idsSql})";
+                if (!ids.Any())
+                {
+                    cmdText = "SELECT * FROM Shop WHERE '1'='2'";
+                }
+                adapter.SelectCommand = new SqlCommand(cmdText, sqlConnection);
                 DataTable table = new DataTable();
                 adapter.Fill(table);
                 dataGridView2.DataSource = table;
