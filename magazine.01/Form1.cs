@@ -1,12 +1,27 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data;
+using System.Data.SqlClient;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Diagnostics;
+using System.Drawing;
 using System.Drawing;
 using System.IO;
+using System.IO;
 using System.Linq;
+using System.Linq;
+using System.Reflection.Emit;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using Newtonsoft.Json;
 using System.ComponentModel;
 
@@ -43,7 +58,9 @@ namespace magazine._01
         private void Form1_Load(object sender, EventArgs e)
         {
             // Використовуємо універсальний шлях |DataDirectory|
-            sqlConnection = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={DataBase.MdfFilePath};Integrated Security=True;Connect Timeout=30");
+            //sqlConnection = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={DataBase.MdfFilePath};Integrated Security=True;Connect Timeout=30");
+            sqlConnection = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;Database={"Database2"};Integrated Security=True;Connect Timeout=30");
+
 
             try
             {
@@ -152,7 +169,8 @@ namespace magazine._01
                     // 2. Дерево (використовуємо try-catch на випадок дублікатів ID)
                     try
                     {
-                        rbTree.Insert(id, instrument);
+                        rbTree.Insert(instrument.Name, instrument);
+
                     }
                     catch { }
                 }
@@ -216,7 +234,7 @@ namespace magazine._01
             }
 
             sw.Stop();
-            labelTime.Text = $"{sw.Elapsed.TotalMilliseconds:F4} мс";
+            labelTime.Text = $"{sw.Elapsed.TotalMilliseconds:F4} с";
             string algoName = isTree ? "Червоно-Чорне дерево" : "Лінійний пошук";
             PrintResultToLog(els, log, $"--- {algoName} ---\n\n");
         }
@@ -598,5 +616,65 @@ namespace magazine._01
                 Console.WriteLine("Removed " + category);
             }
         }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            Form4testing form = new Form4testing(this); // передаем текущую Form1
+            form.Show();
+        }
+
+
+
+
+        public (long avgLinear, long avgTree) MeasureSearchTime(ProgressBar progressBar)
+        {
+            int testCount = 1000;
+            long totalTicksLinear = 0;
+            long totalTicksTree = 0;
+
+            progressBar.Minimum = 0;
+            progressBar.Maximum = testCount;
+            progressBar.Value = 0;
+
+
+            var rand = new Random(10);
+
+            var linList = typeof(LinearSearch)
+                          .GetField("items", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                          .GetValue(linearAlg) as List<MusicInstrument>;
+
+            if (linList == null || linList.Count == 0) return (0, 0);
+
+            List<string> keysHistory = new List<string>();
+            foreach (var item in linList)
+                keysHistory.Add(item.Name);
+
+            for (int i = 0; i < testCount; i++)
+            {
+                string keyName = keysHistory[rand.Next(keysHistory.Count)];
+
+                // Linear Search
+                Stopwatch sw = Stopwatch.StartNew();
+                var linRes = linearAlg.Find(keyName, "");
+                sw.Stop();
+                totalTicksLinear += sw.ElapsedTicks;
+
+                // RedBlackTree Search
+                sw.Restart();
+                var treeRes = rbTree.Find(keyName, "");
+                sw.Stop();
+                totalTicksTree += sw.ElapsedTicks;
+
+                progressBar.Value = i + 1;
+                Application.DoEvents();
+            }
+
+            long avgLinear = totalTicksLinear / testCount;
+            long avgTree = totalTicksTree / testCount;
+
+            return (avgLinear, avgTree);
+        }
+
+
     }
 }
