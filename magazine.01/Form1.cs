@@ -557,14 +557,12 @@ namespace magazine._01
                 MessageBox.Show(ex.Message);
             }
         }
-
-        private bool IsAdmin() => UserName == "admin";
         
         private void UpdateGrid2()
         {
             for (int i = 0; i < rentedTable.Rows.Count; i++)
             {
-                if (rentedTable.Rows[i].ItemArray[0].ToString() != UserName && !IsAdmin()) continue;
+                if (rentedTable.Rows[i].ItemArray[0].ToString() != UserName) continue;
                 
                 string jsonIdList = rentedTable.Rows[i].ItemArray[1].ToString();
                 List<string> ids = JsonConvert.DeserializeObject<List<string>>(jsonIdList);
