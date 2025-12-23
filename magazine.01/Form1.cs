@@ -44,7 +44,7 @@ namespace magazine._01
         {
             // Використовуємо універсальний шлях |DataDirectory|
             //sqlConnection = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={DataBase.MdfFilePath};Integrated Security=True;Connect Timeout=30");
-            sqlConnection = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;Database={"Database2"};Integrated Security=True;Connect Timeout=30");
+            sqlConnection = new SqlConnection($@"Data Source=(LocalDB)\MSSQLLocalDB;Database={DataBase.MdfFilePath};Integrated Security=True;Connect Timeout=30");
 
 
             try
@@ -479,20 +479,34 @@ namespace magazine._01
                         var ids = JsonConvert.DeserializeObject<List<string>>(serializedList);
                         ids.Add(id.ToString());
                         currentRow["IdsList"] = JsonConvert.SerializeObject(ids);
-
+                        
                         isUpdated = true;
-                        rentedSqlDataAdapter.Update(rentedDataSet, "Rented");
                         break;
                     }
                 }
 
                 if (!isUpdated)
                 {
-                    var newRow = rentedTable.NewRow();
-                    newRow["UserName"] = UserName;
-                    newRow["IdsList"] = JsonConvert.SerializeObject(new List<string> { id.ToString() });
-                    rentedTable.Rows.Add(newRow);
+                    var serializedList = JsonConvert.SerializeObject(new List<string> { id.ToString() });
+                    
+                    string sql = $"INSERT INTO Rented (UserName, IdsList) VALUES (@UserName, @IdsList)";
+                    SqlCommand command = new SqlCommand(sql, sqlConnection);
+                    command.Parameters.AddWithValue("@UserName", UserName);
+                    command.Parameters.AddWithValue("@IdsList", serializedList);
+                    
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM Rented", sqlConnection);
+                        adapter.Fill(rentedTable);
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine("Insert Failed: " + ex.Message);
+                    }
                 }
+                
+                rentedSqlDataAdapter.Update(rentedDataSet, "Rented");
 
                 UpdateGrid2();
             }
@@ -607,9 +621,6 @@ namespace magazine._01
             Form4testing form = new Form4testing(this); // передаем текущую Form1
             form.Show();
         }
-
-
-
 
         public (long avgLinear, long avgTree) MeasureSearchTime(ProgressBar progressBar)
         {
